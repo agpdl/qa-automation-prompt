@@ -1,0 +1,18 @@
+name,category,description
+Ana,basic,Simple name
+Juan Perez,basic,Name with space
+Maria-Jose,basic,Name with hyphen
+O'Connor,basic,Name with apostrophe
+José,unicode,Name with accent
+María,unicode,Name with accent
+François,unicode,Name with accent
+Łukasz,unicode,Name with Polish characters
+" Ana",edge_case,Name with leading space
+"Ana ",edge_case,Name with trailing space
+Ana  Maria,edge_case,Name with double space
+"",edge_case,Empty name
+A,edge_case,Single character
+John3,edge_case,Name with number
+Ana*,edge_case,Name with special character
+Ana😀,unicode,Name with emoji
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,edge_case,Very long name 

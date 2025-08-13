@@ -1,37 +1,63 @@
 # QA Automation Challenge
 
-## Introduction
+Ruby scripts for monitoring API uptime and generating web dashboards. Monitors the QA Challenge API endpoint (`https://qa-challenge-nine.vercel.app/api/name-checker`) and includes GitHub Actions automation.
 
-This challenge is designed to evaluate candidate’s practical understanding of scripting, databases, and monitoring.
+## Installation
 
-We have an API at https://qa-challenge-nine.vercel.app/api/name-checker that processes names.
+**Prerequisites:**
+- Ruby 2.6+ 
+- Make utility (usually pre-installed on macOS/Linux, on Windows: `choco install make` or use WSL)
 
-This API endpoint has two issues you are expected to find and fix.
+```bash
+# Clone the repository
+git clone https://github.com/agpdl/qa-automation-prompt.git
+cd qa-automation-prompt
 
-### Uptime
+# Install Ruby dependencies
+gem install sqlite3
+```
 
-You are expected to find out what the actual service uptime is as expressed in time (% of time service returns 200) or requests (% of requests that return 200).
-To do this, you are expected to build a continuously monitoring script.
-In this script, you must log each request into the SQlite database in this project.
+## Bug Found
 
-Second, you are expected to write a second script that reads from this database, calculates the service uptime, and outputs it to the console.
+The API has a bug with URLs containing "example" in the domain name. These requests return HTTP 500 errors:
 
-Tip: Monitoring <10 minutes should be plenty to detect uptime accudately
+- `https://example.com`
+- `http://example.org` 
+- `http://myexample.com`
 
-### The Bug
+Test it:
+```bash
+curl -X POST 'https://qa-challenge-nine.vercel.app/api/name-checker' \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"https://example.com"}'
+```
 
-There is a bug in this application about the format of names. The API will return a specific error when this happens - you are expected to find out the pattern of this error.
+## Usage
 
-## Deliverable
-Create a private fork of this repository and send it over to @conanbatt for review.
-Please commit the request_logs database as you store data on it.
+```bash
+make monitor    # Run 10-minute monitoring
+make uptime     # Show uptime stats
+make dashboard  # Generate HTML dashboard
+```
 
-You are expected to deliver a reproducible case of the bug, as well as a well-defined uptime number in your deliverable. 
+## Live Dashboard
 
-### Tips & Tricks
+Push to GitHub and enable GitHub Pages to see results at:
+`https://agpdl.github.io/qa-automation-prompt/`
 
-- It's very important to give your best on this challenge. Please check the [Takehome Guide](https://docs.silver.dev/interview-ready/technical-fundamentals/guia-de-takehomes) to understand what makes an exceptional takehome.
-- Bonus points for doing this in Ruby (even if it’s not your main language). Otherwise, python or Javascript is preferred.
-- The Bug is not contrived - it does not require lateral thinking.
-- You are welcome to use tooling like Postman, but the deliverable must includes scripts that executre requests and read from the database.
-- Any questions about the challenge, please ask at gabriel@silver.dev.
+The dashboard shows uptime percentages, request counts, error summaries, and timestamps.
+
+Manually trigger monitoring via GitHub Actions or run locally:
+```bash
+make run-full
+```
+
+## Files
+
+- `scripts/monitor.rb` - Main monitoring script
+- `scripts/uptime.rb` - Calculate uptime from database
+- `scripts/generate_dashboard.rb` - Create HTML dashboard
+- `data/seed_names.csv` - Test cases
+- `request_logs.db` - SQLite database
+- `index.html` - Dashboard (auto-generated)
+

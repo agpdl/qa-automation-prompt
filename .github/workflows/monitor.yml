@@ -1,0 +1,80 @@
+name: 🔄 API Monitoring & Dashboard Update
+
+on:
+  # Manual triggering only
+  workflow_dispatch:
+    inputs:
+      duration_minutes:
+        description: "Monitoring duration in minutes"
+        required: false
+        default: "10"
+        type: string
+      interval_seconds:
+        description: "Request interval in seconds"
+        required: false
+        default: "1"
+        type: string
+
+jobs:
+  monitor-and-deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 💎 Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+
+      - name: 🔍 Run API Monitoring
+        env:
+          DURATION_MIN: ${{ github.event.inputs.duration_minutes || '10' }}
+          INTERVAL_SEC: ${{ github.event.inputs.interval_seconds || '1' }}
+        run: |
+          echo "Starting API monitoring..."
+          echo "Duration: ${DURATION_MIN} minutes"
+          echo "Interval: ${INTERVAL_SEC} seconds"
+          make monitor
+
+      - name: 📊 Generate Dynamic Dashboard
+        run: |
+          echo "Generating dashboard from monitoring data..."
+          make dashboard
+
+      - name: 📈 Show Results Summary
+        run: |
+          echo "Monitoring Results:"
+          make uptime
+
+      - name: 🚀 Deploy to GitHub Pages
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          # Add changes
+          git add index.html request_logs.db
+
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-update monitoring dashboard - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            git push
+            echo "Dashboard updated and deployed!"
+          fi
+
+      - name: 📊 Upload monitoring database as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: monitoring-results-${{ github.run_number }}
+          path: |
+            request_logs.db
+            index.html
+          retention-days: 30
