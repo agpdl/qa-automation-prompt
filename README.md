@@ -42,8 +42,7 @@ make dashboard  # Generate HTML dashboard
 
 ## Live Dashboard
 
-Push to GitHub and enable GitHub Pages to see results at:
-`https://agpdl.github.io/qa-automation-prompt/`
+**🌐 View Live Results:** [https://agpdl.github.io/qa-automation-prompt/](https://agpdl.github.io/qa-automation-prompt/)
 
 The dashboard shows uptime percentages, request counts, error summaries, and timestamps.
 
